@@ -6,7 +6,7 @@
 <title>Joyeux Anniversaire Mathéis</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght border-width:400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #0a0a12;
@@ -457,10 +457,10 @@
     player = { x: W/2, vx: 0, targetX: W/2 };
     entities = []; 
     score = 0;
-    lives = 3; // Réinitialisation stricte des points de vie
+    lives = 3; 
     fallSpeed = 90;        
     spawnInterval = 850;   
-    lastSpawn = 400; // Donne 400ms d'attente avant le premier spawn de bloc
+    lastSpawn = 500; // Recule le premier spawn pour laisser le temps de voir venir
     elapsed = 0;
     lastFrame = null;
     updateHud();
@@ -468,14 +468,11 @@
 
   function updateHud(){
     hudScore.textContent = score;
-    
-    // CORRECTION MAJEURE : Système d'affichage des vies ultra simplifié et incassable
     let stars = "";
     for(let i = 0; i < 3; i++) {
       stars += (i < lives) ? "●" : "○";
     }
     hudLives.textContent = stars;
-    
     hudBest.textContent = bestScore;
   }
 
@@ -592,13 +589,14 @@
   let milestoneHit = false;
 
   function loop(ts){
+    // SÉCURITÉ SUPRÊME : si on n'est pas censé tourner, on stoppe net
     if (!running) return;
 
     if (!lastFrame) lastFrame = ts;
     let dt = ts - lastFrame;
     
-    // Protection anti-lag standardisée
-    if (dt > 60 || dt < 0) {
+    // Si le delta time est aberrant, on le force à une valeur saine
+    if (dt > 50 || dt < 0) {
       dt = 16.6; 
     }
     lastFrame = ts;
@@ -642,10 +640,9 @@
           entities.splice(i,1);
           updateHud();
           
-          // Sécurité stricte d'arrêt
           if (lives <= 0){
             endGame();
-            return;
+            return; // Sortie immédiate
           }
           continue;
         } else {
@@ -704,27 +701,30 @@
   });
   window.addEventListener('pointerup', () => { dragging = false; });
 
-  function startGame(){
+  // METHODE RADICALE : Lancement différé après nettoyage de l'interface
+  function triggerStart(){
+    // Éteint tout
     running = false;
-    if (rafId) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
-    }
-    
-    // Application de la réinitialisation complète
-    resetState();
-    keys.left = false;
-    keys.right = false;
-    dragging = false;
-    milestoneHit = false;
-    confettiParticles = [];
-    
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = null;
+
+    // Cache les calques HTML d'abord
     startOverlay.hidden = true;
     gameoverOverlay.hidden = true;
-    
-    running = true;
-    lastFrame = null; 
-    rafId = requestAnimationFrame(loop);
+
+    // Attend 20 millisecondes que le DOM applique le masquage avant de reset l'état et lancer
+    setTimeout(() => {
+      resetState();
+      keys.left = false;
+      keys.right = false;
+      dragging = false;
+      milestoneHit = false;
+      confettiParticles = [];
+      
+      running = true;
+      lastFrame = null;
+      rafId = requestAnimationFrame(loop);
+    }, 20);
   }
 
   const messages = [
@@ -737,6 +737,7 @@
   function endGame(){
     running = false;
     if (rafId) cancelAnimationFrame(rafId);
+    rafId = null;
 
     const isNewBest = score > bestScore;
     if (isNewBest) bestScore = score;
@@ -751,8 +752,9 @@
     gameoverOverlay.hidden = false;
   }
 
-  startBtn.addEventListener('click', startGame);
-  retryBtn.addEventListener('click', startGame);
+  // Événements liés à la fonction découplée
+  startBtn.addEventListener('click', triggerStart);
+  retryBtn.addEventListener('click', triggerStart);
 
   resetState();
   ctx.clearRect(0,0,W,H);
