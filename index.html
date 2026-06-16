@@ -6,7 +6,7 @@
 <title>Joyeux Anniversaire Mathéis</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght border-width:400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #0a0a12;
@@ -220,7 +220,6 @@
     display:block;
     width:100%;
     touch-action:none;
-    cursor:crosshair;
   }
   .scanlines{
     position:absolute; inset:0;
@@ -454,13 +453,13 @@
   const PLAYER_W = 34, PLAYER_H = 22;
 
   function resetState(){
-    player = { x: W/2, vx: 0, targetX: W/2 };
+    player = { x: W/2, targetX: W/2 };
     entities = []; 
     score = 0;
     lives = 3; 
     fallSpeed = 90;        
     spawnInterval = 850;   
-    lastSpawn = 500; // Recule le premier spawn pour laisser le temps de voir venir
+    lastSpawn = 600; 
     elapsed = 0;
     lastFrame = null;
     updateHud();
@@ -589,13 +588,11 @@
   let milestoneHit = false;
 
   function loop(ts){
-    // SÉCURITÉ SUPRÊME : si on n'est pas censé tourner, on stoppe net
     if (!running) return;
 
     if (!lastFrame) lastFrame = ts;
     let dt = ts - lastFrame;
     
-    // Si le delta time est aberrant, on le force à une valeur saine
     if (dt > 50 || dt < 0) {
       dt = 16.6; 
     }
@@ -610,12 +607,22 @@
       lastSpawn = elapsed;
     }
 
-    player.x += player.vx * (dt/16);
-    if (keys.left && !keys.right) player.x -= 0.32 * dt;
-    if (keys.right && !keys.left) player.x += 0.32 * dt;
-    if (dragging) {
-      player.x += (player.targetX - player.x) * 0.25;
+    // GESTION CLAVIER FLUIDE
+    if (keys.left && !keys.right) {
+      player.x -= 0.35 * dt;
+      player.targetX = player.x; // Évite les conflits Clavier/Souris
     }
+    if (keys.right && !keys.left) {
+      player.x += 0.35 * dt;
+      player.targetX = player.x;
+    }
+
+    // GESTION SOURIS/TACTILE FLUIDE (Interpolation linéaire vers la cible)
+    if (dragging) {
+      player.x += (player.targetX - player.x) * 0.3;
+    }
+
+    // Blocage dans l'écran
     player.x = Math.max(PLAYER_W/2, Math.min(W - PLAYER_W/2, player.x));
 
     const py = H - 46;
@@ -642,7 +649,7 @@
           
           if (lives <= 0){
             endGame();
-            return; // Sortie immédiate
+            return;
           }
           continue;
         } else {
@@ -685,34 +692,50 @@
     if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') keys.right = false;
   });
 
-  function pointerToX(clientX){
+  // Calculateur universel de position X par rapport au Canvas
+  function getCanvasX(clientX) {
     const rect = canvas.getBoundingClientRect();
-    return clientX - rect.left;
+    return (clientX - rect.left);
   }
 
-  canvas.addEventListener('pointerdown', (e)=>{
+  // ÉCOUTEURS COMPLETS ET ROBUSTES POUR LE DEPLACEMENT
+  // --- PC (Souris) ---
+  canvas.addEventListener('mousedown', (e) => {
     if (!running) return;
     dragging = true;
-    player.targetX = pointerToX(e.clientX);
+    player.targetX = getCanvasX(e.clientX);
   });
-  canvas.addEventListener('pointermove', (e)=>{
+  window.addEventListener('mousemove', (e) => {
     if (!running || !dragging) return;
-    player.targetX = pointerToX(e.clientX);
+    player.targetX = getCanvasX(e.clientX);
   });
-  window.addEventListener('pointerup', () => { dragging = false; });
+  window.addEventListener('mouseup', () => { dragging = false; });
 
-  // METHODE RADICALE : Lancement différé après nettoyage de l'interface
+  // --- MOBILE (Tactile) ---
+  canvas.addEventListener('touchstart', (e) => {
+    if (!running) return;
+    dragging = true;
+    if(e.touches ? e.touches.length : false) {
+      player.targetX = getCanvasX(e.touches[0].clientX);
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!running || !dragging) return;
+    if(e.touches ? e.touches.length : false) {
+      player.targetX = getCanvasX(e.touches[0].clientX);
+    }
+  }, { passive: true });
+  window.addEventListener('touchend', () => { dragging = false; });
+
   function triggerStart(){
-    // Éteint tout
     running = false;
     if (rafId) cancelAnimationFrame(rafId);
     rafId = null;
 
-    // Cache les calques HTML d'abord
     startOverlay.hidden = true;
     gameoverOverlay.hidden = true;
 
-    // Attend 20 millisecondes que le DOM applique le masquage avant de reset l'état et lancer
     setTimeout(() => {
       resetState();
       keys.left = false;
@@ -752,7 +775,6 @@
     gameoverOverlay.hidden = false;
   }
 
-  // Événements liés à la fonction découplée
   startBtn.addEventListener('click', triggerStart);
   retryBtn.addEventListener('click', triggerStart);
 
