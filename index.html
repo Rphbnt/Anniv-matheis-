@@ -455,12 +455,12 @@
 
   function resetState(){
     player = { x: W/2, vx: 0, targetX: W/2 };
-    entities = [];
+    entities = []; // VRAI NETTOYAGE : Aucun élément résiduel
     score = 0;
     lives = 3;
     fallSpeed = 90;        
     spawnInterval = 850;   
-    lastSpawn = 0;
+    lastSpawn = 500; // FIX DÉLAI : Donne 500ms d'immunité totale au départ sans aucun spawn
     elapsed = 0;
     lastFrame = null;
     updateHud();
@@ -587,18 +587,16 @@
   function loop(ts){
     if (!running) return;
 
-    // SECURITE DELTA TIME CHRONO
     if (!lastFrame) lastFrame = ts;
     let dt = ts - lastFrame;
     
-    // Garde-fou absolu si saut de temps ou lag au démarrage (>100ms)
-    if (dt > 100 || dt < 0) {
+    // Garde-fou anti-lag renforcé
+    if (dt > 60 || dt < 0) {
       dt = 16.6; 
     }
     lastFrame = ts;
     elapsed += dt;
 
-    // Progression de la vitesse
     fallSpeed = 90 + Math.min(elapsed/1000, 60) * 2.4;
     spawnInterval = Math.max(850 - elapsed/40, 320);
 
@@ -698,17 +696,26 @@
   window.addEventListener('pointerup', () => { dragging = false; });
 
   function startGame(){
-    // Annulation propre de l'ancienne boucle si présente
+    // On force l'arrêt strict de toute boucle fantôme
     running = false;
-    if (rafId) cancelAnimationFrame(rafId);
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
     
+    // Nettoyage complet
     resetState();
+    keys.left = false;
+    keys.right = false;
+    dragging = false;
+    
     milestoneHit = false;
     confettiParticles = [];
+    
     startOverlay.hidden = true;
     gameoverOverlay.hidden = true;
     
-    // Nouveau départ sain
+    // Lancement propre
     running = true;
     lastFrame = null; 
     rafId = requestAnimationFrame(loop);
