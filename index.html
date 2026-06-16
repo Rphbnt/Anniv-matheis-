@@ -458,8 +458,8 @@
     entities = [];
     score = 0;
     lives = 3;
-    fallSpeed = 90;        // px/sec
-    spawnInterval = 850;   // ms
+    fallSpeed = 90;        
+    spawnInterval = 850;   
     lastSpawn = 0;
     elapsed = 0;
     lastFrame = null;
@@ -468,7 +468,6 @@
 
   function updateHud(){
     hudScore.textContent = score;
-    // Fix d'affichage : 3 vies max
     hudLives.textContent = '●●●'.slice(0,3).split('').map((_,i)=> i < lives ? '●' : '○').join('');
     hudBest.textContent = bestScore;
   }
@@ -490,7 +489,6 @@
     });
   }
 
-  // Hitbox corrigée (Rectangle / Cercle aligné)
   function rectCircleHit(px, py, pw, ph, cx, cy, cr){
     const closestX = Math.max(px, Math.min(cx, px + pw));
     const closestY = Math.max(py, Math.min(cy, py + ph));
@@ -587,22 +585,23 @@
   let milestoneHit = false;
 
   function loop(ts){
-    // FIX ANTI-LAG RESTART : Si premier lancement, on initialise le chrono et on skip le calcul
-    if (!lastFrame) {
-      lastFrame = ts;
-      if (running) rafId = requestAnimationFrame(loop);
-      return;
-    }
+    if (!running) return;
+
+    // SECURITE DELTA TIME CHRONO
+    if (!lastFrame) lastFrame = ts;
+    let dt = ts - lastFrame;
     
-    const dt = Math.min(ts - lastFrame, 40);
+    // Garde-fou absolu si saut de temps ou lag au démarrage (>100ms)
+    if (dt > 100 || dt < 0) {
+      dt = 16.6; 
+    }
     lastFrame = ts;
     elapsed += dt;
 
-    // difficulty ramp
+    // Progression de la vitesse
     fallSpeed = 90 + Math.min(elapsed/1000, 60) * 2.4;
     spawnInterval = Math.max(850 - elapsed/40, 320);
 
-    // spawn
     if (elapsed - lastSpawn > spawnInterval){
       spawnEntity();
       lastSpawn = elapsed;
@@ -616,7 +615,6 @@
     }
     player.x = Math.max(PLAYER_W/2, Math.min(W - PLAYER_W/2, player.x));
 
-    // update entities
     const py = H - 46;
     for (let i = entities.length - 1; i >= 0; i--){
       const e = entities[i];
@@ -662,7 +660,6 @@
 
     updateConfetti(dt);
 
-    // draw
     ctx.clearRect(0,0,W,H);
     entities.forEach(drawEntity);
     drawPlayer();
@@ -671,7 +668,6 @@
     if (running) rafId = requestAnimationFrame(loop);
   }
 
-  // ---------- input ----------
   const keys = { left:false, right:false };
   let dragging = false;
 
@@ -701,15 +697,20 @@
   });
   window.addEventListener('pointerup', () => { dragging = false; });
 
-  // ---------- game flow ----------
   function startGame(){
+    // Annulation propre de l'ancienne boucle si présente
+    running = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    
     resetState();
     milestoneHit = false;
     confettiParticles = [];
     startOverlay.hidden = true;
     gameoverOverlay.hidden = true;
+    
+    // Nouveau départ sain
     running = true;
-    lastFrame = null; // Reset frame time à chaque démarrage
+    lastFrame = null; 
     rafId = requestAnimationFrame(loop);
   }
 
@@ -740,7 +741,6 @@
   startBtn.addEventListener('click', startGame);
   retryBtn.addEventListener('click', startGame);
 
-  // initial idle render
   resetState();
   ctx.clearRect(0,0,W,H);
   drawPlayer();
