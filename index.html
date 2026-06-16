@@ -207,7 +207,7 @@
     margin-top:2px;
   }
   .hud .score b{ color:var(--cyan); text-shadow:0 0 14px rgba(0,230,246,0.55); }
-  .hud .lives b{ color:var(--magenta); }
+  .hud .lives b{ color:var(--magenta); letter-spacing: 3px; }
   .hud .best b{ color:var(--gold); }
 
   .canvas-wrap{
@@ -455,12 +455,12 @@
 
   function resetState(){
     player = { x: W/2, vx: 0, targetX: W/2 };
-    entities = []; // VRAI NETTOYAGE : Aucun élément résiduel
+    entities = []; 
     score = 0;
-    lives = 3;
+    lives = 3; // Réinitialisation stricte des points de vie
     fallSpeed = 90;        
     spawnInterval = 850;   
-    lastSpawn = 500; // FIX DÉLAI : Donne 500ms d'immunité totale au départ sans aucun spawn
+    lastSpawn = 400; // Donne 400ms d'attente avant le premier spawn de bloc
     elapsed = 0;
     lastFrame = null;
     updateHud();
@@ -468,7 +468,14 @@
 
   function updateHud(){
     hudScore.textContent = score;
-    hudLives.textContent = '●●●'.slice(0,3).split('').map((_,i)=> i < lives ? '●' : '○').join('');
+    
+    // CORRECTION MAJEURE : Système d'affichage des vies ultra simplifié et incassable
+    let stars = "";
+    for(let i = 0; i < 3; i++) {
+      stars += (i < lives) ? "●" : "○";
+    }
+    hudLives.textContent = stars;
+    
     hudBest.textContent = bestScore;
   }
 
@@ -590,7 +597,7 @@
     if (!lastFrame) lastFrame = ts;
     let dt = ts - lastFrame;
     
-    // Garde-fou anti-lag renforcé
+    // Protection anti-lag standardisée
     if (dt > 60 || dt < 0) {
       dt = 16.6; 
     }
@@ -634,6 +641,8 @@
           flashHit();
           entities.splice(i,1);
           updateHud();
+          
+          // Sécurité stricte d'arrêt
           if (lives <= 0){
             endGame();
             return;
@@ -696,26 +705,23 @@
   window.addEventListener('pointerup', () => { dragging = false; });
 
   function startGame(){
-    // On force l'arrêt strict de toute boucle fantôme
     running = false;
     if (rafId) {
       cancelAnimationFrame(rafId);
       rafId = null;
     }
     
-    // Nettoyage complet
+    // Application de la réinitialisation complète
     resetState();
     keys.left = false;
     keys.right = false;
     dragging = false;
-    
     milestoneHit = false;
     confettiParticles = [];
     
     startOverlay.hidden = true;
     gameoverOverlay.hidden = true;
     
-    // Lancement propre
     running = true;
     lastFrame = null; 
     rafId = requestAnimationFrame(loop);
