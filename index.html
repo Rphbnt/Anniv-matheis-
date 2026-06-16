@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joyeux Anniversaire Mathéis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0a12;
+    --bg-soft: #11101c;
+    --magenta: #ff2e88;
+    --cyan: #00e6f6;
+    --violet: #7b2ff7;
+    --gold: #ffd23f;
+    --ink: #f2f0fa;
+    --ink-dim: #9c98b5;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 20% 0%, rgba(123,47,247,0.25), transparent 50%),
+      radial-gradient(circle at 80% 10%, rgba(0,230,246,0.15), transparent 45%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:92vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:8vh 6vw 6vh;
+    position:relative;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:42px 42px;
+    mask-image: radial-gradient(circle at 50% 35%, black 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.35em;
+    font-size:0.72rem;
+    color:var(--cyan);
+    text-transform:uppercase;
+    margin-bottom:1.4rem;
+    z-index:1;
+  }
+  .glitch-title{
+    font-family:'Anton', sans-serif;
+    font-size:clamp(3.2rem, 14vw, 8.5rem);
+    line-height:0.95;
+    letter-spacing:0.01em;
+    text-transform:uppercase;
+    position:relative;
+    color:var(--ink);
+    z-index:1;
+    user-select:none;
+  }
+  .glitch-title::before,
+  .glitch-title::after{
+    content:attr(data-text);
+    position:absolute;
+    left:0; top:0; width:100%;
+    pointer-events:none;
+  }
+  .glitch-title::before{
+    color:var(--magenta);
+    transform:translate(-3px,1px);
+    opacity:0.55;
+    animation:glitchShift 4.5s infinite ease-in-out;
+  }
+  .glitch-title::after{
+    color:var(--cyan);
+    transform:translate(3px,-1px);
+    opacity:0.55;
+    animation:glitchShift 4.5s infinite ease-in-out reverse;
+  }
+  @keyframes glitchShift{
+    0%, 92%, 100%{ transform:translate(-3px,1px); opacity:0.5; }
+    93%{ transform:translate(4px,-2px); opacity:0.9; }
+    95%{ transform:translate(-5px,2px); opacity:0.3; }
+    97%{ transform:translate(2px,1px); opacity:0.85; }
+  }
+  .hero-sub{
+    margin-top:1.6rem;
+    font-size:clamp(1rem, 2.4vw, 1.25rem);
+    color:var(--ink-dim);
+    max-width:34ch;
+    z-index:1;
+  }
+  .cta{
+    margin-top:3rem;
+    z-index:1;
+  }
+  .btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.85rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    background:transparent;
+    color:var(--ink);
+    border:1px solid var(--cyan);
+    padding:0.95rem 2.1rem;
+    border-radius:2px;
+    cursor:pointer;
+    position:relative;
+    transition:transform 0.15s ease, box-shadow 0.25s ease, color 0.25s ease;
+    box-shadow:0 0 0 rgba(0,230,246,0);
+  }
+  .btn:hover{
+    box-shadow:0 0 22px rgba(0,230,246,0.45);
+    transform:translateY(-2px);
+  }
+  .btn:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+  }
+  .btn.primary{
+    background:var(--cyan);
+    color:#06121a;
+    border-color:var(--cyan);
+  }
+  .btn.primary:hover{ box-shadow:0 0 28px rgba(0,230,246,0.65); }
+  .btn.ghost{ border-color:rgba(255,255,255,0.25); }
+  .btn.ghost:hover{ box-shadow:0 0 18px rgba(255,255,255,0.18); border-color:var(--ink-dim); }
+
+  /* ---------- GAME SECTION ---------- */
+  #game-section{
+    padding:4vh 5vw 8vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .section-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.3em;
+    font-size:0.68rem;
+    color:var(--magenta);
+    text-transform:uppercase;
+    margin-bottom:0.6rem;
+  }
+  .section-title{
+    font-family:'Anton', sans-serif;
+    font-size:clamp(1.8rem, 5vw, 2.8rem);
+    text-transform:uppercase;
+    margin:0 0 2rem;
+    text-align:center;
+  }
+
+  .cabinet{
+    position:relative;
+    border:1px solid rgba(255,255,255,0.12);
+    background:linear-gradient(180deg, var(--bg-soft), #0c0b16);
+    border-radius:14px;
+    padding:18px;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.03) inset,
+      0 30px 60px -20px rgba(0,0,0,0.6);
+  }
+  .cabinet::before, .cabinet::after,
+  .corner-tl, .corner-tr, .corner-bl, .corner-br{
+    content:"";
+    position:absolute;
+    width:18px; height:18px;
+    border-color:var(--cyan);
+    opacity:0.7;
+  }
+  .corner-tl{top:6px; left:6px; border-top:2px solid var(--cyan); border-left:2px solid var(--cyan);}
+  .corner-tr{top:6px; right:6px; border-top:2px solid var(--cyan); border-right:2px solid var(--cyan);}
+  .corner-bl{bottom:6px; left:6px; border-bottom:2px solid var(--magenta); border-left:2px solid var(--magenta);}
+  .corner-br{bottom:6px; right:6px; border-bottom:2px solid var(--magenta); border-right:2px solid var(--magenta);}
+
+  .hud{
+    display:flex;
+    justify-content:space-between;
+    gap:1rem;
+    font-family:'JetBrains Mono', monospace;
+    padding:0 4px 12px;
+    font-size:0.78rem;
+    letter-spacing:0.05em;
+    color:var(--ink-dim);
+    text-transform:uppercase;
+  }
+  .hud b{
+    display:block;
+    color:var(--ink);
+    font-size:1.25rem;
+    letter-spacing:0;
+    margin-top:2px;
+  }
+  .hud .score b{ color:var(--cyan); text-shadow:0 0 14px rgba(0,230,246,0.55); }
+  .hud .lives b{ color:var(--magenta); }
+  .hud .best b{ color:var(--gold); }
+
+  .canvas-wrap{
+    position:relative;
+    border-radius:8px;
+    overflow:hidden;
+    background:#070611;
+  }
+  #game-canvas{
+    display:block;
+    width:100%;
+    touch-action:none;
+    cursor:crosshair;
+  }
+  .scanlines{
+    position:absolute; inset:0;
+    pointer-events:none;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.025) 0px,
+      rgba(255,255,255,0.025) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    mix-blend-mode:overlay;
+  }
+  .vignette-flash{
+    position:absolute; inset:0;
+    pointer-events:none;
+    background:radial-gradient(circle, transparent 55%, rgba(255,46,136,0.55) 100%);
+    opacity:0;
+    transition:opacity 0.08s ease;
+  }
+  .vignette-flash.hit{ opacity:1; }
+
+  .overlay{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center;
+    background:rgba(7,6,17,0.86);
+    backdrop-filter:blur(2px);
+    padding:1.5rem;
+    gap:1rem;
+  }
+  .overlay h3{
+    font-family:'Anton', sans-serif;
+    font-size:clamp(1.4rem, 5vw, 2rem);
+    text-transform:uppercase;
+    margin:0;
+  }
+  .overlay p{
+    color:var(--ink-dim);
+    max-width:30ch;
+    margin:0;
+    font-size:0.92rem;
+  }
+  .overlay .big-score{
+    font-family:'JetBrains Mono', monospace;
+    font-size:2.6rem;
+    color:var(--gold);
+    text-shadow:0 0 24px rgba(255,210,63,0.5);
+  }
+  .overlay .new-best{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.2em;
+    color:var(--cyan);
+    text-transform:uppercase;
+  }
+
+  .controls-hint{
+    margin-top:1.1rem;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.04em;
+    color:var(--ink-dim);
+    text-align:center;
+    max-width:36ch;
+  }
+  .legend{
+    display:flex; gap:1.4rem; justify-content:center; margin-top:0.7rem; flex-wrap:wrap;
+  }
+  .legend span{
+    display:inline-flex; align-items:center; gap:0.4rem;
+    font-family:'JetBrains Mono', monospace; font-size:0.68rem; color:var(--ink-dim);
+  }
+  .dot{width:9px; height:9px; border-radius:50%; display:inline-block;}
+  .dot.cyan{background:var(--cyan); box-shadow:0 0 8px var(--cyan);}
+  .dot.gold{background:var(--gold); box-shadow:0 0 8px var(--gold);}
+  .dot.red{background:#ff3b3b; box-shadow:0 0 8px #ff3b3b;}
+
+  /* ---------- MESSAGE ---------- */
+  .message{
+    padding:6vh 8vw 10vh;
+    text-align:center;
+    max-width:640px;
+    margin:0 auto;
+  }
+  .message .section-title{ margin-bottom:1.2rem; }
+  .message p{
+    color:var(--ink-dim);
+    line-height:1.7;
+    font-size:1.02rem;
+  }
+  .signature{
+    margin-top:2rem;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.08em;
+    color:var(--ink);
+  }
+
+  footer{
+    text-align:center;
+    padding:2rem 0 3rem;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem;
+    letter-spacing:0.15em;
+    color:rgba(156,152,181,0.5);
+    text-transform:uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .glitch-title::before,.glitch-title::after{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">// édition anniversaire — accès limité //</div>
+  <h1 class="glitch-title" data-text="MATHÉIS">MATHÉIS</h1>
+  <p class="hero-sub">Un site, un jeu, un seul boss à battre aujourd'hui : toi. Bon anniversaire.</p>
+  <div class="cta">
+    <button class="btn primary" onclick="document.getElementById('game-section').scrollIntoView({behavior:'smooth'})">Lancer le jeu ↓</button>
+  </div>
+</header>
+
+<main>
+  <section id="game-section">
+    <div class="section-eyebrow">Niveau unique</div>
+    <h2 class="section-title">Esquive &amp; Score</h2>
+
+    <div class="cabinet">
+      <span class="corner-tl"></span><span class="corner-tr"></span>
+      <span class="corner-bl"></span><span class="corner-br"></span>
+
+      <div class="hud">
+        <div class="score">Score<b id="hud-score">0</b></div>
+        <div class="lives">Vies<b id="hud-lives">●●●</b></div>
+        <div class="best">Record<b id="hud-best">0</b></div>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="game-canvas"></canvas>
+        <div class="scanlines"></div>
+        <div class="vignette-flash" id="flash"></div>
+
+        <div class="overlay" id="start-overlay">
+          <h3>Prêt à jouer ?</h3>
+          <p>Évite les glitchs rouges, choppe les orbes. Plus tu tiens, plus ça accélère.</p>
+          <button class="btn primary" id="start-btn">Démarrer</button>
+        </div>
+
+        <div class="overlay" id="gameover-overlay" hidden>
+          <h3>Game Over</h3>
+          <div class="big-score" id="final-score">0</div>
+          <p class="new-best" id="new-best-tag" hidden>Nouveau record !</p>
+          <p id="game-over-msg">Pas mal, mais Mathéis fait mieux.</p>
+          <button class="btn primary" id="retry-btn">Rejouer</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-hint">
+      Flèches ←/→ ou A/D, ou glisse le doigt sur l'écran pour bouger.
+    </div>
+    <div class="legend">
+      <span><span class="dot cyan"></span> +10 pts</span>
+      <span><span class="dot gold"></span> +50 pts</span>
+      <span><span class="dot red"></span> -1 vie</span>
+    </div>
+  </section>
+
+  <section class="message">
+    <div class="section-eyebrow">Message</div>
+    <h2 class="section-title">Joyeux anniversaire</h2>
+    <p>
+      Encore une année de plus, encore un peu plus stylé, encore un peu plus dur à suivre.
+      J'espère que cette journée est exactement comme tu l'aimes — et que tu vas quand même
+      perdre contre ce petit jeu pourri que je t'ai fait avec amour.
+    </p>
+    <div class="signature">— Ton frère, Raphaël</div>
+  </section>
+</main>
+
+<footer>fait main, sans IA dans les sentiments</footer>
+
+<script>
+(function(){
+  const canvas = document.getElementById('game-canvas');
+  const ctx = canvas.getContext('2d');
+  const wrap = canvas.parentElement;
+  const flash = document.getElementById('flash');
+
+  const hudScore = document.getElementById('hud-score');
+  const hudLives = document.getElementById('hud-lives');
+  const hudBest = document.getElementById('hud-best');
+
+  const startOverlay = document.getElementById('start-overlay');
+  const gameoverOverlay = document.getElementById('gameover-overlay');
+  const finalScoreEl = document.getElementById('final-score');
+  const newBestTag = document.getElementById('new-best-tag');
+  const gameOverMsg = document.getElementById('game-over-msg');
+  const startBtn = document.getElementById('start-btn');
+  const retryBtn = document.getElementById('retry-btn');
+
+  let dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+
+  function resize(){
+    const cssWidth = Math.min(wrap.clientWidth, 480);
+    const cssHeight = cssWidth * 1.3;
+    wrap.style.width = cssWidth + 'px';
+    wrap.style.height = cssHeight + 'px';
+    canvas.width = cssWidth * dpr;
+    canvas.height = cssHeight * dpr;
+    canvas.style.width = cssWidth + 'px';
+    canvas.style.height = cssHeight + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W = cssWidth; H = cssHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // ---------- state ----------
+  let bestScore = 0;
+  let running = false;
+  let rafId = null;
+
+  let player, entities, score, lives, fallSpeed, spawnInterval, lastSpawn, elapsed, lastFrame;
+
+  const PLAYER_W = 34, PLAYER_H = 22;
+
+  function resetState(){
+    player = { x: W/2, vx: 0, targetX: W/2 };
+    entities = [];
+    score = 0;
+    lives = 3;
+    fallSpeed = 90;        // px/sec
+    spawnInterval = 850;   // ms
+    lastSpawn = 0;
+    elapsed = 0;
+    lastFrame = null;
+    updateHud();
+  }
+
+  function updateHud(){
+    hudScore.textContent = score;
+    // CORRECTION : .slice(0,3) pour n'afficher que le nombre exact de vies max
+    hudLives.textContent = '●●●'.slice(0,3).split('').map((_,i)=> i < lives ? '●' : '○').join('');
+    hudBest.textContent = bestScore;
+  }
+
+  function spawnEntity(){
+    const r = Math.random();
+    let type;
+    if (r < 0.55) type = 'red';
+    else if (r < 0.85) type = 'cyan';
+    else type = 'gold';
+
+    const size = type === 'red' ? 22 : 14;
+    entities.push({
+      type,
+      x: 18 + Math.random() * (W - 36),
+      y: -size,
+      size,
+      wobble: Math.random() * Math.PI * 2
+    });
+  }
+
+  // CORRECTION : Formule de collision mathématiquement alignée sur le rectangle réel
+  function rectCircleHit(px, py, pw, ph, cx, cy, cr){
+    const closestX = Math.max(px, Math.min(cx, px + pw));
+    const closestY = Math.max(py, Math.min(cy, py + ph));
+    const dx = cx - closestX;
+    const dy = cy - closestY;
+    return (dx * dx + dy * dy) < (cr * cr);
+  }
+
+  function flashHit(){
+    flash.classList.add('hit');
+    setTimeout(()=> flash.classList.remove('hit'), 140);
+  }
+
+  function triggerConfetti(){
+    const burst = [];
+    const colors = ['#ff2e88','#00e6f6','#ffd23f','#7b2ff7'];
+    for(let i=0;i<46;i++){
+      burst.push({
+        x: W/2 + (Math.random()-0.5)*60,
+        y: H*0.32,
+        vx: (Math.random()-0.5)*5,
+        vy: -Math.random()*5 - 2,
+        g: 0.18 + Math.random()*0.1,
+        size: 3 + Math.random()*4,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        life: 70 + Math.random()*30
+      });
+    }
+    confettiParticles = confettiParticles.concat(burst);
+  }
+  let confettiParticles = [];
+
+  function drawPlayer(){
+    const px = player.x, py = H - 46;
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.shadowColor = '#ff2e88';
+    ctx.shadowBlur = 16;
+    ctx.fillStyle = '#ff2e88';
+    ctx.beginPath();
+    ctx.moveTo(0, -PLAYER_H/2);
+    ctx.lineTo(PLAYER_W/2, 0);
+    ctx.lineTo(0, PLAYER_H/2);
+    ctx.lineTo(-PLAYER_W/2, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawEntity(e){
+    ctx.save();
+    if (e.type === 'red'){
+      const jitter = Math.sin(e.wobble + elapsed*0.02) * 1.6;
+      ctx.translate(e.x + jitter, e.y);
+      ctx.shadowColor = '#ff3b3b';
+      ctx.shadowBlur = 12;
+      ctx.fillStyle = '#ff3b3b';
+      ctx.fillRect(-e.size/2, -e.size/2, e.size, e.size);
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.strokeRect(-e.size/2, -e.size/2, e.size, e.size);
+    } else {
+      const color = e.type === 'gold' ? '#ffd23f' : '#00e6f6';
+      ctx.translate(e.x, e.y);
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 14;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(0,0,e.size/2,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawConfetti(){
+    confettiParticles.forEach(p=>{
+      ctx.save();
+      ctx.globalAlpha = Math.max(p.life/100, 0);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+      ctx.restore();
+    });
+  }
+
+  function updateConfetti(dt){
+    confettiParticles.forEach(p=>{
+      p.vy += p.g;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 1;
+    });
+    confettiParticles = confettiParticles.filter(p=>p.life > 0 && p.y < H + 20);
+  }
+
+  let milestoneHit = false;
+
+  function loop(ts){
+    if (!lastFrame) lastFrame = ts;
+    const dt = Math.min(ts - lastFrame, 40);
+    lastFrame = ts;
+    elapsed += dt;
+
+    // difficulty ramp
+    fallSpeed = 90 + Math.min(elapsed/1000, 60) * 2.4;
+    spawnInterval = Math.max(850 - elapsed/40, 320);
+
+    // spawn
+    if (elapsed - lastSpawn > spawnInterval){
+      spawnEntity();
+      lastSpawn = elapsed;
+    }
+
+    player.x += player.vx * (dt/16);
+    if (keys.left && !keys.right) player.x -= 0.32 * dt;
+    if (keys.right && !keys.left) player.x += 0.32 * dt;
+    if (dragging) {
+      player.x += (player.targetX - player.x) * 0.25;
+    }
+    player.x = Math.max(PLAYER_W/2, Math.min(W - PLAYER_W/2, player.x));
+
+    // update entities
+    const py = H - 46;
+    for (let i = entities.length - 1; i >= 0; i--){
+      const e = entities[i];
+      e.y += fallSpeed * (dt/1000);
+
+      // CORRECTION : Les coordonnées prennent en compte l'origine en haut à gauche du rectangle virtuel du joueur
+      const hit = rectCircleHit(
+        player.x - PLAYER_W/2, 
+        py - PLAYER_H/2, 
+        PLAYER_W, 
+        PLAYER_H,
+        e.x, 
+        e.y, 
+        e.size/2
+      );
+
+      if (hit){
+        if (e.type === 'red'){
+          lives -= 1;
+          flashHit();
+          entities.splice(i,1);
+          updateHud();
+          if (lives <= 0){
+            endGame();
+            return;
+          }
+          continue;
+        } else {
+          score += e.type === 'gold' ? 50 : 10;
+          entities.splice(i,1);
+          updateHud();
+          if (score >= 200 && !milestoneHit){
+            milestoneHit = true;
+            triggerConfetti();
+          }
+          continue;
+        }
+      }
+
+      if (e.y - e.size/2 > H){
+        entities.splice(i,1);
+      }
+    }
+
+    updateConfetti(dt);
+
+    // draw
+    ctx.clearRect(0,0,W,H);
+    entities.forEach(drawEntity);
+    drawPlayer();
+    drawConfetti();
+
+    if (running) rafId = requestAnimationFrame(loop);
+  }
+
+  // ---------- input ----------
+  const keys = { left:false, right:false };
+  let dragging = false;
+
+  window.addEventListener('keydown', (e)=>{
+    if (!running) return;
+    if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') keys.left = true;
+    if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') keys.right = true;
+  });
+  window.addEventListener('keyup', (e)=>{
+    if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') keys.left = false;
+    if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') keys.right = false;
+  });
+
+  function pointerToX(clientX){
+    const rect = canvas.getBoundingClientRect();
+    return clientX - rect.left;
+  }
+
+  canvas.addEventListener('pointerdown', (e)=>{
+    if (!running) return;
+    dragging = true;
+    player.targetX = pointerToX(e.clientX);
+  });
+  canvas.addEventListener('pointermove', (e)=>{
+    if (!running || !dragging) return;
+    player.targetX = pointerToX(e.clientX);
+  });
+  window.addEventListener('pointerup', () => { dragging = false; });
+
+  // ---------- game flow ----------
+  function startGame(){
+    resetState();
+    milestoneHit = false;
+    confettiParticles = [];
+    startOverlay.hidden = true;
+    gameoverOverlay.hidden = true;
+    running = true;
+    lastFrame = null;
+    rafId = requestAnimationFrame(loop);
+  }
+
+  const messages = [
+    "Pas mal, mais Mathéis fait mieux.",
+    "Le record n'a qu'à bien se tenir.",
+    "Encore un essai, le glitch t'a eu cette fois.",
+    "Score correct. Score d'anniversaire, ça compte double."
+  ];
+
+  function endGame(){
+    running = false;
+    if (rafId) cancelAnimationFrame(rafId);
+
+    const isNewBest = score > bestScore;
+    if (isNewBest) bestScore = score;
+    updateHud();
+
+    finalScoreEl.textContent = score;
+    newBestTag.hidden = !isNewBest;
+    gameOverMsg.textContent = isNewBest
+      ? "Nouveau record du jour. Joyeux anniversaire, légende."
+      : messages[Math.floor(Math.random()*messages.length)];
+
+    gameoverOverlay.hidden = false;
+  }
+
+  startBtn.addEventListener('click', startGame);
+  retryBtn.addEventListener('click', startGame);
+
+  // initial idle render
+  resetState();
+  ctx.clearRect(0,0,W,H);
+  drawPlayer();
+})();
+</script>
+</body>
+</html>
