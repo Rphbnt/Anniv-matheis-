@@ -468,7 +468,7 @@
 
   function updateHud(){
     hudScore.textContent = score;
-    // CORRECTION : .slice(0,3) pour n'afficher que le nombre exact de vies max
+    // Fix d'affichage : 3 vies max
     hudLives.textContent = '●●●'.slice(0,3).split('').map((_,i)=> i < lives ? '●' : '○').join('');
     hudBest.textContent = bestScore;
   }
@@ -490,7 +490,7 @@
     });
   }
 
-  // CORRECTION : Formule de collision mathématiquement alignée sur le rectangle réel
+  // Hitbox corrigée (Rectangle / Cercle aligné)
   function rectCircleHit(px, py, pw, ph, cx, cy, cr){
     const closestX = Math.max(px, Math.min(cx, px + pw));
     const closestY = Math.max(py, Math.min(cy, py + ph));
@@ -587,7 +587,13 @@
   let milestoneHit = false;
 
   function loop(ts){
-    if (!lastFrame) lastFrame = ts;
+    // FIX ANTI-LAG RESTART : Si premier lancement, on initialise le chrono et on skip le calcul
+    if (!lastFrame) {
+      lastFrame = ts;
+      if (running) rafId = requestAnimationFrame(loop);
+      return;
+    }
+    
     const dt = Math.min(ts - lastFrame, 40);
     lastFrame = ts;
     elapsed += dt;
@@ -616,7 +622,6 @@
       const e = entities[i];
       e.y += fallSpeed * (dt/1000);
 
-      // CORRECTION : Les coordonnées prennent en compte l'origine en haut à gauche du rectangle virtuel du joueur
       const hit = rectCircleHit(
         player.x - PLAYER_W/2, 
         py - PLAYER_H/2, 
@@ -704,7 +709,7 @@
     startOverlay.hidden = true;
     gameoverOverlay.hidden = true;
     running = true;
-    lastFrame = null;
+    lastFrame = null; // Reset frame time à chaque démarrage
     rafId = requestAnimationFrame(loop);
   }
 
